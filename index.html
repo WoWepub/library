@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="my">
 <head>
 <meta charset="UTF-8">
-<title>Whisper Library</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper Of Words Library</title>
 
 <style>
 
 body{
   margin:0;
-  font-family:sans-serif;
-  background:#f1f1f1;
+  font-family: system-ui;
+  background:#f5f5f5;
 }
 
 .header{
@@ -19,44 +18,44 @@ body{
   font-size:22px;
   font-weight:bold;
   text-align:center;
-  background:#ffffff;
+  background:white;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  gap:14px;
-  padding:14px;
+  grid-template-columns:repeat(auto-fill, minmax(120px,1fr));
+  gap:16px;
+  padding:16px;
 }
 
 .book{
-  background:#fff;
+  background:white;
   border-radius:12px;
   overflow:hidden;
-  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  transition:0.2s;
+}
+
+.book:hover{
+  transform:scale(1.05);
 }
 
 .book img{
   width:100%;
-  height:220px;
+  height:180px;
   object-fit:cover;
 }
 
-.book-title{
-  padding:10px;
+.title{
+  padding:8px;
   font-size:14px;
-  font-weight:bold;
-}
-
-.book a{
-  text-decoration:none;
-  color:black;
+  text-align:center;
 }
 
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="header">
@@ -65,33 +64,20 @@ Whisper Of Words Library
 
 <div class="grid">
 
-<div class="book">
-<a href="https://whisper1of.blogspot.com/" target="_blank">
-<img src="https://via.placeholder.com/300x450?text=Book+1">
-<div class="book-title">Book Title 1</div>
+<a class="book" href="https://whisper1of.blogspot.com/2026/02/fathers-and-sons-ivan-turgenev.html">
+<img src="https://wowepub.github.io/library/covers/fathers-and-sons.jpg">
+<div class="title">Fathers and Sons</div>
 </a>
-</div>
 
-<div class="book">
-<a href="https://whisper1of.blogspot.com/" target="_blank">
-<img src="https://via.placeholder.com/300x450?text=Book+2">
-<div class="book-title">Book Title 2</div>
+<a class="book" href="#">
+<img src="https://wowepub.github.io/library/covers/book2.jpg">
+<div class="title">Book Title</div>
 </a>
-</div>
 
-<div class="book">
-<a href="https://whisper1of.blogspot.com/" target="_blank">
-<img src="https://via.placeholder.com/300x450?text=Book+3">
-<div class="book-title">Book Title 3</div>
+<a class="book" href="#">
+<img src="https://wowepub.github.io/library/covers/book3.jpg">
+<div class="title">Book Title</div>
 </a>
-</div>
-
-<div class="book">
-<a href="https://whisper1of.blogspot.com/" target="_blank">
-<img src="https://via.placeholder.com/300x450?text=Book+4">
-<div class="book-title">Book Title 4</div>
-</a>
-</div>
 
 </div>
 
