@@ -18,6 +18,51 @@ body { font-family: sans-serif; background:#f1f1f1; margin:0; }
 
 <div class="header">Whisper Of Words Library</div>
 <div class="grid" id="books"></div>
+<script>
+const blogURL = "https://whisper1of.blogspot.com";
+
+fetch("https://whisper1of.blogspot.com/feeds/posts/default?alt=json&max-results=50")
+.then(res => res.json())
+.then(data => {
+
+  const posts = data.feed.entry;
+  const grid = document.getElementById("bookGrid");
+
+  posts.forEach(post => {
+
+    const title = post.title.$t;
+
+    // post link
+    const link = post.link.find(l => l.rel === "alternate").href;
+
+    // cover image
+    let image = "";
+    if(post.media$thumbnail){
+      image = post.media$thumbnail.url.replace("/s72-c/", "/s300/");
+    } else {
+      image = "https://via.placeholder.com/300x450?text=No+Cover";
+    }
+
+    // create grid card
+    const card = document.createElement("a");
+    card.href = link;
+    card.className = "book-card";
+    card.target = "_blank";
+
+    card.innerHTML = `
+      <img src="${image}" alt="${title}">
+      <div class="book-title">${title}</div>
+    `;
+
+    grid.appendChild(card);
+
+  });
+
+})
+.catch(error => {
+  console.error("Error loading posts:", error);
+});
+                </script>
 
 <script>
 function loadBooks(data){
