@@ -5,71 +5,32 @@
 <title>Whisper Of Words Library</title>
 
 <style>
-body {
-  font-family: sans-serif;
-  background: #f1f1f1;
-  margin: 0;
-}
-
-.header {
-  text-align: center;
-  padding: 15px;
-  font-size: 22px;
-  font-weight: bold;
-  background: white;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  padding: 15px;
-}
-
-.book {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.book img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-}
-
-.title {
-  padding: 10px;
-  font-size: 14px;
-}
+body { font-family: sans-serif; background:#f1f1f1; margin:0; }
+.header { text-align:center; padding:15px; font-size:22px; font-weight:bold; background:white; }
+.grid { display:grid; grid-template-columns:repeat(2,1fr); gap:15px; padding:15px; }
+.book { background:white; border-radius:12px; overflow:hidden; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+.book img { width:100%; height:220px; object-fit:cover; }
+.title { padding:10px; font-size:14px; }
 </style>
 </head>
 
 <body>
 
 <div class="header">Whisper Of Words Library</div>
-
 <div class="grid" id="books"></div>
 
 <script>
-const blogURL = "https://whisper1of.blogspot.com/feeds/posts/default?alt=json";
-
-fetch(blogURL)
-.then(res => res.json())
-.then(data => {
-
+function loadBooks(data){
   const booksDiv = document.getElementById("books");
+
+  if(!data.feed.entry) return;
 
   data.feed.entry.forEach(post => {
 
     const title = post.title.$t;
-
     const link = post.link.find(l => l.rel === "alternate").href;
 
     let image = "";
-
     if(post.media$thumbnail){
       image = post.media$thumbnail.url.replace("s72-c","s400");
     } else {
@@ -84,11 +45,11 @@ fetch(blogURL)
         </a>
       </div>
     `;
-
   });
-
-});
+}
 </script>
+
+<script src="https://whisper1of.blogspot.com/feeds/posts/default?alt=json-in-script&callback=loadBooks"></script>
 
 </body>
 </html>
