@@ -46,65 +46,44 @@ body {
   color:#111;
 }
 </style>
-
 </head>
 <body>
 
 <div class="header">Whisper Of Words Library</div>
-
 <div class="grid" id="books"></div>
 
 <script>
-let startIndex = 1;
-let loading = false;
+function loadBooks(data){
 
-function loadAllPosts() {
-  if (loading) return;
-  loading = true;
+  const booksDiv = document.getElementById("books");
 
-  fetch(`https://whisper1of.blogspot.com/feeds/posts/default?alt=json&max-results=50&start-index=${startIndex}`)
-    .then(res => res.json())
-    .then(data => {
+  if(!data.feed.entry) return;
 
-      const booksDiv = document.getElementById("books");
-      const entries = data.feed.entry;
+  data.feed.entry.forEach(post => {
 
-      if (!entries) return;
+    const title = post.title.$t;
+    const link = post.link.find(l => l.rel === "alternate").href;
 
-      entries.forEach(post => {
+    let image = "";
+    if(post.media$thumbnail){
+      image = post.media$thumbnail.url.replace("s72-c","s400");
+    } else {
+      image = "https://via.placeholder.com/400x600?text=No+Cover";
+    }
 
-        const title = post.title.$t;
-        const link = post.link.find(l => l.rel === "alternate").href;
-
-        let image = "";
-        if (post.media$thumbnail) {
-          image = post.media$thumbnail.url.replace("s72-c","s400");
-        } else {
-          image = "https://via.placeholder.com/400x600?text=No+Cover";
-        }
-
-        booksDiv.innerHTML += `
-          <div class="book">
-            <a href="${link}" target="_blank">
-              <img src="${image}">
-              <div class="title">${title}</div>
-            </a>
-          </div>
-        `;
-      });
-
-      if (entries.length === 50) {
-        startIndex += 50;
-        loading = false;
-        loadAllPosts();
-      }
-
-    })
-    .catch(err => console.log(err));
+    booksDiv.innerHTML += `
+      <div class="book">
+        <a href="${link}" target="_blank">
+          <img src="${image}">
+          <div class="title">${title}</div>
+        </a>
+      </div>
+    `;
+  });
 }
-
-loadAllPosts();
 </script>
+
+<script src="https://whisper1of.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=999&callback=loadBooks"></script>
 
 </body>
 </html>
