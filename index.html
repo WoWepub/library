@@ -1,84 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WOW EPUB Library</title>
-
-<style>
-body{
-  font-family: system-ui, -apple-system, sans-serif;
-  margin:0;
-  background:#f5f6fa;
-}
-
-.header{
-  position:sticky;
-  top:0;
-  background:white;
-  padding:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
-  z-index:100;
-}
-
-#searchBox{
-  width:100%;
-  padding:12px 16px;
-  font-size:16px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  outline:none;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:16px;
-  padding:16px;
-}
-
-.book{
-  background:white;
-  border-radius:12px;
-  padding:10px;
-  text-align:center;
-  box-shadow:0 2px 6px rgba(0,0,0,0.08);
-  transition:0.15s;
-}
-
-.book:hover{
-  transform:translateY(-4px);
-}
-
-.book img{
-  width:100%;
-  border-radius:8px;
-}
-
-.book-title{
-  font-size:14px;
-  margin-top:8px;
-}
-</style>
-
-</head>
-<body>
-
-<div class="header">
-  <input type="text" id="searchBox" placeholder="Search books...">
-</div>
-
-<div id="bookGrid" class="grid"></div>
-
 <script>
-const repo = "wowepub";
+
+const repo = "wowepub.github.io"; // ✅ ဒီနေရာ FIX
 const folder = "library";
 const cacheKey = "bookCache_v1";
 
 let books = [];
 
-
-// Load books (cache first)
 async function loadBooks(){
 
   const cache = localStorage.getItem(cacheKey);
@@ -86,18 +13,16 @@ async function loadBooks(){
   if(cache){
     books = JSON.parse(cache);
     renderBooks(books);
-    refreshCache(); // update background
+    refreshCache();
   }else{
     await refreshCache();
   }
 
 }
 
-
-// Refresh cache from GitHub
 async function refreshCache(){
 
-  const url = `https://api.github.com/repos/${repo}/${repo}.github.io/contents/${folder}`;
+  const url = `https://api.github.com/repos/${repo}/contents/${folder}`;
 
   const res = await fetch(url);
   const data = await res.json();
@@ -117,25 +42,23 @@ async function refreshCache(){
   localStorage.setItem(cacheKey, JSON.stringify(books));
 
   renderBooks(books);
+
 }
 
-
-// Render
 function renderBooks(list){
 
   const grid = document.getElementById("bookGrid");
 
   grid.innerHTML = list.map(book => `
     <a class="book" href="${book.link}">
-      <img src="${book.cover}" loading="lazy">
+      <img src="${book.cover}" loading="lazy"
+      onerror="this.src='https://via.placeholder.com/300x450?text=No+Cover'">
       <div class="book-title">${book.name}</div>
     </a>
   `).join("");
 
 }
 
-
-// Ultra fast search
 document.getElementById("searchBox").addEventListener("input", e => {
 
   const q = e.target.value.toLowerCase();
@@ -148,11 +71,6 @@ document.getElementById("searchBox").addEventListener("input", e => {
 
 });
 
-
-// Start
 loadBooks();
 
 </script>
-
-</body>
-</html>
