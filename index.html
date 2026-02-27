@@ -1,76 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Whisper Of Words Library</title>
+
+<style>
+body {
+  font-family: sans-serif;
+  background:#f1f1f1;
+  margin:0;
+}
+
+.header {
+  text-align:center;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  background:white;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  padding:15px;
+}
+
+.book {
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  text-align:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.book img {
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.title {
+  padding:10px;
+  font-size:14px;
+  color:#111;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Whisper Of Words Library</div>
+<div class="grid" id="books"></div>
+
 <script>
 
-const repo = "wowepub.github.io"; // ✅ ဒီနေရာ FIX
-const folder = "library";
-const cacheKey = "bookCache_v1";
+let nextFeed = "https://whisper1of.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=14&callback=loadBooks";
 
-let books = [];
+function loadBooks(data){
 
-async function loadBooks(){
+  const booksDiv = document.getElementById("books");
 
-  const cache = localStorage.getItem(cacheKey);
+  if(data.feed.entry){
 
-  if(cache){
-    books = JSON.parse(cache);
-    renderBooks(books);
-    refreshCache();
-  }else{
-    await refreshCache();
+    data.feed.entry.forEach(post => {
+
+      const title = post.title.$t;
+      const link = post.link.find(l => l.rel === "alternate").href;
+
+      let image = "";
+      if(post.media$thumbnail){
+        image = post.media$thumbnail.url.replace("s72-c","s400");
+      } else {
+        image = "https://via.placeholder.com/400x600?text=No+Cover";
+      }
+
+      booksDiv.innerHTML += `
+        <div class="book">
+          <a href="${link}" target="_blank">
+            <img src="${image}">
+            <div class="title">${title}</div>
+          </a>
+        </div>
+      `;
+    });
+
+  }
+
+  // find next page
+  const nextLink = data.feed.link.find(l => l.rel === "next");
+
+  if(nextLink){
+    loadNext(nextLink.href);
   }
 
 }
 
-async function refreshCache(){
+function loadNext(url){
 
-  const url = `https://api.github.com/repos/${repo}/contents/${folder}`;
+  const script = document.createElement("script");
+  script.src = url + "&callback=loadBooks";
 
-  const res = await fetch(url);
-  const data = await res.json();
-
-  books = data.map(file => {
-
-    const name = file.name.replace(".epub","");
-
-    return {
-      name: name,
-      link: file.download_url,
-      cover: `covers/${name}.jpg`
-    };
-
-  });
-
-  localStorage.setItem(cacheKey, JSON.stringify(books));
-
-  renderBooks(books);
+  document.body.appendChild(script);
 
 }
 
-function renderBooks(list){
-
-  const grid = document.getElementById("bookGrid");
-
-  grid.innerHTML = list.map(book => `
-    <a class="book" href="${book.link}">
-      <img src="${book.cover}" loading="lazy"
-      onerror="this.src='https://via.placeholder.com/300x450?text=No+Cover'">
-      <div class="book-title">${book.name}</div>
-    </a>
-  `).join("");
-
-}
-
-document.getElementById("searchBox").addEventListener("input", e => {
-
-  const q = e.target.value.toLowerCase();
-
-  const filtered = books.filter(book =>
-    book.name.toLowerCase().includes(q)
-  );
-
-  renderBooks(filtered);
-
-});
-
-loadBooks();
+// load first page
+loadNext("https://whisper1of.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=14");
 
 </script>
+
+</body>
+</html>
