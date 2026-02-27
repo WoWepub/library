@@ -47,43 +47,68 @@ body {
 }
 </style>
 </head>
+
 <body>
 
 <div class="header">Whisper Of Words Library</div>
 <div class="grid" id="books"></div>
 
 <script>
+
+let nextFeed = "https://whisper1of.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=14&callback=loadBooks";
+
 function loadBooks(data){
 
   const booksDiv = document.getElementById("books");
 
-  if(!data.feed.entry) return;
+  if(data.feed.entry){
 
-  data.feed.entry.forEach(post => {
+    data.feed.entry.forEach(post => {
 
-    const title = post.title.$t;
-    const link = post.link.find(l => l.rel === "alternate").href;
+      const title = post.title.$t;
+      const link = post.link.find(l => l.rel === "alternate").href;
 
-    let image = "";
-    if(post.media$thumbnail){
-      image = post.media$thumbnail.url.replace("s72-c","s400");
-    } else {
-      image = "https://via.placeholder.com/400x600?text=No+Cover";
-    }
+      let image = "";
+      if(post.media$thumbnail){
+        image = post.media$thumbnail.url.replace("s72-c","s400");
+      } else {
+        image = "https://via.placeholder.com/400x600?text=No+Cover";
+      }
 
-    booksDiv.innerHTML += `
-      <div class="book">
-        <a href="${link}" target="_blank">
-          <img src="${image}">
-          <div class="title">${title}</div>
-        </a>
-      </div>
-    `;
-  });
+      booksDiv.innerHTML += `
+        <div class="book">
+          <a href="${link}" target="_blank">
+            <img src="${image}">
+            <div class="title">${title}</div>
+          </a>
+        </div>
+      `;
+    });
+
+  }
+
+  // find next page
+  const nextLink = data.feed.link.find(l => l.rel === "next");
+
+  if(nextLink){
+    loadNext(nextLink.href);
+  }
+
 }
-</script>
 
-<script src="https://whisper1of.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=999&callback=loadBooks"></script>
+function loadNext(url){
+
+  const script = document.createElement("script");
+  script.src = url + "&callback=loadBooks";
+
+  document.body.appendChild(script);
+
+}
+
+// load first page
+loadNext("https://whisper1of.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=14");
+
+</script>
 
 </body>
 </html>
